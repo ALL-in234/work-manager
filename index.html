@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的工作管理</title>
+<style>
+  :root {
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --border: #e5e7eb;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --danger: #ef4444;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans HK", sans-serif;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  header {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  header h1 { margin: 0; font-size: 1.4rem; font-weight: 600; }
+  .header-actions { display: flex; gap: 8px; }
+  button, .btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.15s;
+  }
+  button:hover, .btn:hover { background: var(--primary-hover); }
+  button.secondary, .btn.secondary {
+    background: #f3f4f6;
+    color: var(--text);
+  }
+  button.secondary:hover { background: #e5e7eb; }
+  button.danger { background: var(--danger); }
+  button.danger:hover { background: #dc2626; }
+  button.small { padding: 4px 8px; font-size: 0.8rem; }
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 800px) {
+    .container { grid-template-columns: 1fr; }
+    aside { order: 2; }
+  }
+  aside, .main {
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 16px;
+  }
+  aside h3 { margin: 0 0 12px; font-size: 1rem; }
+  .project-list { list-style: none; padding: 0; margin: 0; }
+  .project-list li {
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .project-list li:hover, .project-list li.active {
+    background: #eff6ff;
+  }
+  .project-list li.active { font-weight: 600; color: var(--primary); }
+  .filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .filters input, .filters select {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+  .filters input { flex: 1; min-width: 180px; }
+  .task-list { display: flex; flex-direction: column; gap: 10px; }
+  .task {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 12px;
+    align-items: start;
+    background: white;
+  }
+  .task.done { opacity: 0.6; }
+  .task.done .task-title { text-decoration: line-through; }
+  .task-check { margin-top: 4px; }
+  .task-title { font-weight: 600; margin: 0 0 4px; }
+  .task-meta {
+    font-size: 0.8rem;
+    color: var(--muted);
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .priority-high { color: var(--danger); font-weight: 600; }
+  .priority-medium { color: var(--warning); }
+  .priority-low { color: var(--success); }
+  .status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  .status-todo { background: #f3f4f6; }
+  .status-progress { background: #dbeafe; color: #1e40af; }
+  .status-done { background: #d1fae5; color: #065f46; }
+  .task-actions { display: flex; gap: 6px; }
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+  .modal {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  }
+  .modal h2 { margin: 0 0 16px; }
+  .form-group { margin-bottom: 12px; }
+  .form-group label { display: block; font-size: 0.85rem; margin-bottom: 4px; color: var(--muted); }
+  .form-group input, .form-group textarea, .form-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+  }
+  .form-group textarea { min-height: 80px; resize: vertical; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+  .empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 40px 20px;
+  }
+  .stats {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>我的工作管理</h1>
+  <div class="header-actions">
+    <button class="secondary" onclick="exportData()">匯出 JSON</button>
+    <button class="secondary" onclick="document.getElementById('importFile').click()">匯入 JSON</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(this)">
+    <button onclick="openTaskModal()">＋ 新增任務</button>
+  </div>
+</header>
+
+<div class="container">
+  <aside>
+    <h3>專案</h3>
+    <ul class="project-list" id="projectList"></ul>
+    <button class="secondary" style="width:100%; margin-top:12px;" onclick="openProjectModal()">＋ 新增專案</button>
+  </aside>
+
+  <div class="main">
+    <div class="stats" id="stats"></div>
+    <div class="filters">
+      <input type="text" id="search" placeholder="搜尋任務..." oninput="renderTasks()">
+      <select id="filterStatus" onchange="renderTasks()">
+        <option value="">全部狀態</option>
+        <option value="todo">待辦</option>
+        <option value="progress">進行中</option>
+        <option value="done">已完成</option>
+      </select>
+      <select id="filterPriority" onchange="renderTasks()">
+        <option value="">全部優先級</option>
+        <option value="high">高</option>
+        <option value="medium">中</option>
+        <option value="low">低</option>
+      </select>
+    </div>
+    <div class="task-list" id="taskList"></div>
+  </div>
+</div>
+
+<!-- Task Modal -->
+<div class="modal-overlay" id="taskModal" style="display:none;">
+  <div class="modal">
+    <h2 id="taskModalTitle">新增任務</h2>
+    <input type="hidden" id="editTaskId">
+    <div class="form-group">
+      <label>標題</label>
+      <input type="text" id="taskTitle" placeholder="任務標題">
+    </div>
+    <div class="form-group">
+      <label>描述</label>
+      <textarea id="taskDesc" placeholder="詳細說明（可選）"></textarea>
+    </div>
+    <div class="form-group">
+      <label>專案</label>
+      <select id="taskProject"></select>
+    </div>
+    <div class="form-group">
+      <label>狀態</label>
+      <select id="taskStatus">
+        <option value="todo">待辦</option>
+        <option value="progress">進行中</option>
+        <option value="done">已完成</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>優先級</label>
+      <select id="taskPriority">
+        <option value="medium">中</option>
+        <option value="high">高</option>
+        <option value="low">低</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>截止日期</label>
+      <input type="date" id="taskDue">
+    </div>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModal('taskModal')">取消</button>
+      <button onclick="saveTask()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Project Modal -->
+<div class="modal-overlay" id="projectModal" style="display:none;">
+  <div class="modal">
+    <h2>新增專案</h2>
+    <div class="form-group">
+      <label>專案名稱</label>
+      <input type="text" id="projectName" placeholder="例如：工作、個人、客戶A">
+    </div>
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModal('projectModal')">取消</button>
+      <button onclick="saveProject()">新增</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let data = {
+  projects: [
+    { id: 'inbox', name: '收件匣' },
+    { id: 'work', name: '工作' },
+    { id: 'personal', name: '個人' }
+  ],
+  tasks: [],
+  currentProject: 'inbox'
+};
+
+function load() {
+  const saved = localStorage.getItem('workManager');
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      data.projects = parsed.projects || data.projects;
+      data.tasks = parsed.tasks || [];
+      data.currentProject = parsed.currentProject || 'inbox';
+    } catch (e) {}
+  }
+  render();
+}
+
+function save() {
+  localStorage.setItem('workManager', JSON.stringify(data));
+}
+
+function render() {
+  renderProjects();
+  renderTasks();
+}
+
+function renderProjects() {
+  const list = document.getElementById('projectList');
+  list.innerHTML = '';
+  data.projects.forEach(p => {
+    const li = document.createElement('li');
+    li.className = p.id === data.currentProject ? 'active' : '';
+    const count = data.tasks.filter(t => t.projectId === p.id && t.status !== 'done').length;
+    li.innerHTML = `<span>${p.name}</span> ${count > 0 ? `<span style="color:var(--muted);font-size:0.8rem">${count}</span>` : ''}`;
+    li.onclick = () => {
+      data.currentProject = p.id;
+      save();
+      render();
+    };
+    list.appendChild(li);
+  });
+}
+
+function renderTasks() {
+  const list = document.getElementById('taskList');
+  const search = document.getElementById('search').value.toLowerCase();
+  const status = document.getElementById('filterStatus').value;
+  const priority = document.getElementById('filterPriority').value;
+
+  let tasks = data.tasks.filter(t => t.projectId === data.currentProject);
+  if (search) tasks = tasks.filter(t => t.title.toLowerCase().includes(search) || (t.desc && t.desc.toLowerCase().includes(search)));
+  if (status) tasks = tasks.filter(t => t.status === status);
+  if (priority) tasks = tasks.filter(t => t.priority === priority);
+
+  // Sort: not done first, then by due date
+  tasks.sort((a, b) => {
+    if (a.status === 'done' && b.status !== 'done') return 1;
+    if (a.status !== 'done' && b.status === 'done') return -1;
+    if (a.due && b.due) return a.due.localeCompare(b.due);
+    if (a.due) return -1;
+    if (b.due) return 1;
+    return 0;
+  });
+
+  const total = data.tasks.filter(t => t.projectId === data.currentProject).length;
+  const done = data.tasks.filter(t => t.projectId === data.currentProject && t.status === 'done').length;
+  document.getElementById('stats').textContent = `此專案共 ${total} 項任務，已完成 ${done} 項`;
+
+  if (tasks.length === 0) {
+    list.innerHTML = '<div class="empty">沒有任務。點擊右上角「＋ 新增任務」開始。</div>';
+    return;
+  }
+
+  list.innerHTML = '';
+  tasks.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'task' + (t.status === 'done' ? ' done' : '');
+    const priorityClass = t.priority === 'high' ? 'priority-high' : t.priority === 'low' ? 'priority-low' : 'priority-medium';
+    const statusText = t.status === 'todo' ? '待辦' : t.status === 'progress' ? '進行中' : '已完成';
+    const statusClass = t.status === 'todo' ? 'status-todo' : t.status === 'progress' ? 'status-progress' : 'status-done';
+    const dueText = t.due ? `截止：${t.due}` : '';
+
+    div.innerHTML = `
+      <input type="checkbox" class="task-check" ${t.status === 'done' ? 'checked' : ''} onchange="toggleDone('${t.id}')">
+      <div>
+        <div class="task-title">${escapeHtml(t.title)}</div>
+        ${t.desc ? `<div style="font-size:0.9rem;color:var(--muted);margin-bottom:6px;">${escapeHtml(t.desc)}</div>` : ''}
+        <div class="task-meta">
+          <span class="${priorityClass}">優先級：${t.priority === 'high' ? '高' : t.priority === 'medium' ? '中' : '低'}</span>
+          <span class="status-badge ${statusClass}">${statusText}</span>
+          ${dueText ? `<span>${dueText}</span>` : ''}
+        </div>
+      </div>
+      <div class="task-actions">
+        <button class="small secondary" onclick="editTask('${t.id}')">編輯</button>
+        <button class="small danger" onclick="deleteTask('${t.id}')">刪除</button>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, m => ({'&':'&','<':'<','>':'>','"':'"',"'":'&#39;'}[m]));
+}
+
+function openTaskModal(task = null) {
+  document.getElementById('taskModalTitle').textContent = task ? '編輯任務' : '新增任務';
+  document.getElementById('editTaskId').value = task ? task.id : '';
+  document.getElementById('taskTitle').value = task ? task.title : '';
+  document.getElementById('taskDesc').value = task ? (task.desc || '') : '';
+  document.getElementById('taskStatus').value = task ? task.status : 'todo';
+  document.getElementById('taskPriority').value = task ? task.priority : 'medium';
+  document.getElementById('taskDue').value = task ? (task.due || '') : '';
+
+  const sel = document.getElementById('taskProject');
+  sel.innerHTML = '';
+  data.projects.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.id;
+    opt.textContent = p.name;
+    if (task && task.projectId === p.id) opt.selected = true;
+    else if (!task && p.id === data.currentProject) opt.selected = true;
+    sel.appendChild(opt);
+  });
+
+  document.getElementById('taskModal').style.display = 'flex';
+}
+
+function closeModal(id) {
+  document.getElementById(id).style.display = 'none';
+}
+
+function saveTask() {
+  const title = document.getElementById('taskTitle').value.trim();
+  if (!title) return alert('請輸入標題');
+
+  const id = document.getElementById('editTaskId').value;
+  const task = {
+    id: id || Date.now().toString(),
+    title,
+    desc: document.getElementById('taskDesc').value.trim(),
+    projectId: document.getElementById('taskProject').value,
+    status: document.getElementById('taskStatus').value,
+    priority: document.getElementById('taskPriority').value,
+    due: document.getElementById('taskDue').value
+  };
+
+  if (id) {
+    const idx = data.tasks.findIndex(t => t.id === id);
+    if (idx >= 0) data.tasks[idx] = task;
+  } else {
+    data.tasks.push(task);
+  }
+  save();
+  closeModal('taskModal');
+  render();
+}
+
+function editTask(id) {
+  const task = data.tasks.find(t => t.id === id);
+  if (task) openTaskModal(task);
+}
+
+function deleteTask(id) {
+  if (!confirm('確定刪除這個任務？')) return;
+  data.tasks = data.tasks.filter(t => t.id !== id);
+  save();
+  render();
+}
+
+function toggleDone(id) {
+  const task = data.tasks.find(t => t.id === id);
+  if (task) {
+    task.status = task.status === 'done' ? 'todo' : 'done';
+    save();
+    render();
+  }
+}
+
+function openProjectModal() {
+  document.getElementById('projectName').value = '';
+  document.getElementById('projectModal').style.display = 'flex';
+}
+
+function saveProject() {
+  const name = document.getElementById('projectName').value.trim();
+  if (!name) return alert('請輸入專案名稱');
+  const id = 'p_' + Date.now();
+  data.projects.push({ id, name });
+  save();
+  closeModal('projectModal');
+  render();
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `work-manager-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+}
+
+function importData(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (imported.projects && imported.tasks) {
+        data = imported;
+        save();
+        render();
+        alert('匯入成功');
+      } else {
+        alert('檔案格式不正確');
+      }
+    } catch {
+      alert('無法讀取檔案');
+    }
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// Init
+load();
+</script>
+</body>
+</html>
