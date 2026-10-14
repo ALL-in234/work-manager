@@ -76,7 +76,16 @@
       "status": "todo",
       "priority": "medium",
       "due": "2026-10-23"
+    },
+    {
+      "id": "1791958876195",
+      "title": "128 消防",
+      "desc": "",
+      "projectId": "personal",
+      "status": "progress",
+      "priority": "medium",
+      "due": ""
     }
   ],
-  "currentProject": "work"
+  "currentProject": "personal"
 }
