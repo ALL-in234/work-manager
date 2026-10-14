@@ -119,7 +119,7 @@
       "desc": "渠務工程不批，消防未做",
       "projectId": "personal",
       "status": "todo",
-      "priority": "medium",
+      "priority": "low",
       "due": "2026-12-20"
     },
     {
