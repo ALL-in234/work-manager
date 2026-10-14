@@ -17,7 +17,7 @@
     {
       "id": "1791958001464",
       "title": "林太停車場",
-      "desc": "",
+      "desc": "10月23開會，大機會批准",
       "projectId": "work",
       "status": "todo",
       "priority": "high",
@@ -114,5 +114,5 @@
       "due": ""
     }
   ],
-  "currentProject": "personal"
+  "currentProject": "work"
 }
