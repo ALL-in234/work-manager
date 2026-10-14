@@ -28,7 +28,7 @@
       "title": "752",
       "desc": "",
       "projectId": "work",
-      "status": "done",
+      "status": "todo",
       "priority": "medium",
       "due": "2026-12-04"
     },
@@ -46,7 +46,7 @@
       "title": "傑寶",
       "desc": "",
       "projectId": "work",
-      "status": "done",
+      "status": "todo",
       "priority": "medium",
       "due": "2026-11-20"
     },
