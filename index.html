@@ -89,11 +89,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 8px;
   }
   .project-list li:hover, .project-list li.active {
     background: #eff6ff;
   }
   .project-list li.active { font-weight: 600; color: var(--primary); }
+  .project-actions { display: flex; gap: 4px; }
   .filters {
     display: flex;
     gap: 8px;
@@ -192,7 +194,6 @@
 </style>
 </head>
 <body>
-
 <header>
   <h1>我的工作管理</h1>
   <div class="header-actions">
@@ -201,14 +202,12 @@
     <button onclick="openTaskModal()">＋ 新增任務</button>
   </div>
 </header>
-
 <div class="container">
   <aside>
     <h3>專案</h3>
     <ul class="project-list" id="projectList"></ul>
     <button class="secondary" style="width:100%; margin-top:12px;" onclick="openProjectModal()">＋ 新增專案</button>
   </aside>
-
   <div class="main">
     <div class="stats" id="stats"></div>
     <div class="filters">
@@ -277,14 +276,15 @@
 <!-- Project Modal -->
 <div class="modal-overlay" id="projectModal" style="display:none;">
   <div class="modal">
-    <h2>新增專案</h2>
+    <h2 id="projectModalTitle">新增專案</h2>
+    <input type="hidden" id="editProjectId">
     <div class="form-group">
       <label>專案名稱</label>
       <input type="text" id="projectName" placeholder="例如：工作、個人、客戶A">
     </div>
     <div class="modal-actions">
       <button class="secondary" onclick="closeModal('projectModal')">取消</button>
-      <button onclick="saveProject()">新增</button>
+      <button onclick="saveProject()">儲存</button>
     </div>
   </div>
 </div>
@@ -293,7 +293,7 @@
 <div class="modal-overlay" id="settingsModal" style="display:none;">
   <div class="modal">
     <h2>GitHub 線上儲存設定</h2>
-    <p class="hint">資料會儲存在你指定的 GitHub repo 裡的 JSON 檔案。需要一個有 <code>repo</code> 權限的 Personal Access Token。</p>
+    <p class="hint">資料會儲存在你指定的 GitHub repo 裡的 JSON 檔案。需要一個有 <code>Contents</code> 權限的 Personal Access Token（建議用 fine-grained token）。</p>
     <div class="form-group">
       <label>GitHub 使用者名稱</label>
       <input type="text" id="ghOwner" placeholder="你的 GitHub username">
@@ -308,8 +308,8 @@
     </div>
     <div class="form-group">
       <label>Personal Access Token</label>
-      <input type="password" id="ghToken" placeholder="ghp_xxxxxxxx">
-      <div class="hint">建議權限只開 <code>repo</code>。Token 只存在你自己的瀏覽器。</div>
+      <input type="password" id="ghToken" placeholder="ghp_xxxxxxxx 或 github_pat_...">
+      <div class="hint">Token 只存在你自己的瀏覽器 localStorage。</div>
     </div>
     <div class="modal-actions">
       <button class="secondary" onclick="closeModal('settingsModal')">取消</button>
@@ -328,14 +328,12 @@ let data = {
   tasks: [],
   currentProject: 'inbox'
 };
-
 let ghConfig = {
   owner: '',
   repo: '',
   path: 'data.json',
   token: ''
 };
-
 let currentSha = null;
 let syncing = false;
 
@@ -375,7 +373,7 @@ async function loadFromGitHub() {
     const url = `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/${ghConfig.path}`;
     const res = await fetch(url, {
       headers: {
-        'Authorization': `token ${ghConfig.token}`,
+        'Authorization': `Bearer ${ghConfig.token}`,
         'Accept': 'application/vnd.github.v3+json'
       }
     });
@@ -384,10 +382,13 @@ async function loadFromGitHub() {
       currentSha = null;
       return true;
     }
-    if (!res.ok) throw new Error(await res.text());
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(errText || `HTTP ${res.status}`);
+    }
     const file = await res.json();
     currentSha = file.sha;
-    const content = atob(file.content);
+    const content = decodeURIComponent(escape(atob(file.content)));
     const parsed = JSON.parse(content);
     if (parsed.projects && parsed.tasks) {
       data = parsed;
@@ -397,7 +398,8 @@ async function loadFromGitHub() {
     }
   } catch (e) {
     console.error(e);
-    setStatus('載入失敗', 'error');
+    setStatus('載入失敗：' + (e.message || e), 'error');
+    alert('從 GitHub 載入失敗：\n' + (e.message || e));
     return false;
   }
   return false;
@@ -419,19 +421,23 @@ async function saveToGitHub() {
     const res = await fetch(url, {
       method: 'PUT',
       headers: {
-        'Authorization': `token ${ghConfig.token}`,
+        'Authorization': `Bearer ${ghConfig.token}`,
         'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(body)
     });
-    if (!res.ok) throw new Error(await res.text());
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(errText || `HTTP ${res.status}`);
+    }
     const result = await res.json();
     currentSha = result.content.sha;
     setStatus('已同步', 'ok');
   } catch (e) {
     console.error(e);
-    setStatus('儲存失敗', 'error');
+    setStatus('儲存失敗：' + (e.message || e), 'error');
+    alert('儲存到 GitHub 失敗：\n' + (e.message || e));
   } finally {
     syncing = false;
   }
@@ -458,12 +464,48 @@ function renderProjects() {
     const li = document.createElement('li');
     li.className = p.id === data.currentProject ? 'active' : '';
     const count = data.tasks.filter(t => t.projectId === p.id && t.status !== 'done').length;
-    li.innerHTML = `<span>${p.name}</span> ${count > 0 ? `<span style="color:var(--muted);font-size:0.8rem">${count}</span>` : ''}`;
-    li.onclick = () => {
+    const nameSpan = document.createElement('span');
+    nameSpan.textContent = p.name;
+    nameSpan.style.flex = '1';
+    nameSpan.onclick = () => {
       data.currentProject = p.id;
       saveLocal();
       render();
     };
+
+    const actions = document.createElement('div');
+    actions.className = 'project-actions';
+
+    if (p.id !== 'inbox') {
+      const editBtn = document.createElement('button');
+      editBtn.className = 'small secondary';
+      editBtn.textContent = '編輯';
+      editBtn.onclick = (e) => {
+        e.stopPropagation();
+        openProjectModal(p);
+      };
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'small danger';
+      delBtn.textContent = '刪';
+      delBtn.onclick = (e) => {
+        e.stopPropagation();
+        deleteProject(p.id);
+      };
+
+      actions.appendChild(editBtn);
+      actions.appendChild(delBtn);
+    }
+
+    li.appendChild(nameSpan);
+    if (count > 0) {
+      const countSpan = document.createElement('span');
+      countSpan.style.color = 'var(--muted)';
+      countSpan.style.fontSize = '0.8rem';
+      countSpan.textContent = count;
+      li.appendChild(countSpan);
+    }
+    li.appendChild(actions);
     list.appendChild(li);
   });
 }
@@ -473,12 +515,10 @@ function renderTasks() {
   const search = document.getElementById('search').value.toLowerCase();
   const status = document.getElementById('filterStatus').value;
   const priority = document.getElementById('filterPriority').value;
-
   let tasks = data.tasks.filter(t => t.projectId === data.currentProject);
   if (search) tasks = tasks.filter(t => t.title.toLowerCase().includes(search) || (t.desc && t.desc.toLowerCase().includes(search)));
   if (status) tasks = tasks.filter(t => t.status === status);
   if (priority) tasks = tasks.filter(t => t.priority === priority);
-
   tasks.sort((a, b) => {
     if (a.status === 'done' && b.status !== 'done') return 1;
     if (a.status !== 'done' && b.status === 'done') return -1;
@@ -487,16 +527,13 @@ function renderTasks() {
     if (b.due) return 1;
     return 0;
   });
-
   const total = data.tasks.filter(t => t.projectId === data.currentProject).length;
   const done = data.tasks.filter(t => t.projectId === data.currentProject && t.status === 'done').length;
   document.getElementById('stats').textContent = `此專案共 ${total} 項任務，已完成 ${done} 項`;
-
   if (tasks.length === 0) {
     list.innerHTML = '<div class="empty">沒有任務。點擊右上角「＋ 新增任務」開始。</div>';
     return;
   }
-
   list.innerHTML = '';
   tasks.forEach(t => {
     const div = document.createElement('div');
@@ -505,7 +542,6 @@ function renderTasks() {
     const statusText = t.status === 'todo' ? '待辦' : t.status === 'progress' ? '進行中' : '已完成';
     const statusClass = t.status === 'todo' ? 'status-todo' : t.status === 'progress' ? 'status-progress' : 'status-done';
     const dueText = t.due ? `截止：${t.due}` : '';
-
     div.innerHTML = `
       <input type="checkbox" class="task-check" ${t.status === 'done' ? 'checked' : ''} onchange="toggleDone('${t.id}')">
       <div>
@@ -527,7 +563,13 @@ function renderTasks() {
 }
 
 function escapeHtml(str) {
-  return (str || '').replace(/[&<>"']/g, m => ({'&':'&','<':'<','>':'>','"':'"',"'":'&#39;'}[m]));
+  return (str || '').replace(/[&<>"']/g, m => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[m]));
 }
 
 function openTaskModal(task = null) {
@@ -538,7 +580,6 @@ function openTaskModal(task = null) {
   document.getElementById('taskStatus').value = task ? task.status : 'todo';
   document.getElementById('taskPriority').value = task ? task.priority : 'medium';
   document.getElementById('taskDue').value = task ? (task.due || '') : '';
-
   const sel = document.getElementById('taskProject');
   sel.innerHTML = '';
   data.projects.forEach(p => {
@@ -549,7 +590,6 @@ function openTaskModal(task = null) {
     else if (!task && p.id === data.currentProject) opt.selected = true;
     sel.appendChild(opt);
   });
-
   document.getElementById('taskModal').style.display = 'flex';
 }
 
@@ -560,7 +600,6 @@ function closeModal(id) {
 async function saveTask() {
   const title = document.getElementById('taskTitle').value.trim();
   if (!title) return alert('請輸入標題');
-
   const id = document.getElementById('editTaskId').value;
   const task = {
     id: id || Date.now().toString(),
@@ -571,7 +610,6 @@ async function saveTask() {
     priority: document.getElementById('taskPriority').value,
     due: document.getElementById('taskDue').value
   };
-
   if (id) {
     const idx = data.tasks.findIndex(t => t.id === id);
     if (idx >= 0) data.tasks[idx] = task;
@@ -607,18 +645,48 @@ async function toggleDone(id) {
   }
 }
 
-function openProjectModal() {
-  document.getElementById('projectName').value = '';
+function openProjectModal(project = null) {
+  document.getElementById('projectModalTitle').textContent = project ? '編輯專案' : '新增專案';
+  document.getElementById('editProjectId').value = project ? project.id : '';
+  document.getElementById('projectName').value = project ? project.name : '';
   document.getElementById('projectModal').style.display = 'flex';
 }
 
 async function saveProject() {
   const name = document.getElementById('projectName').value.trim();
   if (!name) return alert('請輸入專案名稱');
-  const id = 'p_' + Date.now();
-  data.projects.push({ id, name });
+  const id = document.getElementById('editProjectId').value;
+  if (id) {
+    const proj = data.projects.find(p => p.id === id);
+    if (proj) proj.name = name;
+  } else {
+    const newId = 'p_' + Date.now();
+    data.projects.push({ id: newId, name });
+  }
   saveLocal();
   closeModal('projectModal');
+  render();
+  await saveToGitHub();
+}
+
+async function deleteProject(id) {
+  if (id === 'inbox') return;
+  const proj = data.projects.find(p => p.id === id);
+  if (!proj) return;
+  const taskCount = data.tasks.filter(t => t.projectId === id).length;
+  let msg = `確定刪除專案「${proj.name}」？`;
+  if (taskCount > 0) {
+    msg += `\n此專案有 ${taskCount} 個任務，將會全部移到「收件匣」。`;
+  }
+  if (!confirm(msg)) return;
+
+  // Move tasks to inbox
+  data.tasks.forEach(t => {
+    if (t.projectId === id) t.projectId = 'inbox';
+  });
+  data.projects = data.projects.filter(p => p.id !== id);
+  if (data.currentProject === id) data.currentProject = 'inbox';
+  saveLocal();
   render();
   await saveToGitHub();
 }
@@ -641,7 +709,6 @@ async function saveSettings() {
   const ok = await loadFromGitHub();
   if (ok) {
     render();
-    // If file didn't exist, save current data
     if (!currentSha) await saveToGitHub();
   }
 }
