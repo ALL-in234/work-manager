@@ -1,0 +1,18 @@
+{
+  "projects": [
+    {
+      "id": "inbox",
+      "name": "收件匣"
+    },
+    {
+      "id": "work",
+      "name": "工作"
+    },
+    {
+      "id": "personal",
+      "name": "個人"
+    }
+  ],
+  "tasks": [],
+  "currentProject": "work"
+}
