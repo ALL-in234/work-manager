@@ -80,7 +80,7 @@
     {
       "id": "1791958876195",
       "title": "128 消防",
-      "desc": "",
+      "desc": "已經入紙給消防",
       "projectId": "personal",
       "status": "progress",
       "priority": "medium",
@@ -114,5 +114,5 @@
       "due": ""
     }
   ],
-  "currentProject": "work"
+  "currentProject": "personal"
 }
