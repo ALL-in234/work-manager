@@ -152,7 +152,16 @@
       "status": "todo",
       "priority": "low",
       "due": ""
+    },
+    {
+      "id": "1791966086867",
+      "title": "測試a",
+      "desc": "",
+      "projectId": "p_1791966067314",
+      "status": "todo",
+      "priority": "medium",
+      "due": ""
     }
   ],
-  "currentProject": "personal"
+  "currentProject": "p_1791966067314"
 }
