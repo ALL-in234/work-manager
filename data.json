@@ -19,7 +19,7 @@
       "title": "林太停車場",
       "desc": "",
       "projectId": "work",
-      "status": "done",
+      "status": "todo",
       "priority": "high",
       "due": "2026-10-23"
     },
@@ -55,7 +55,7 @@
       "title": "綠化地",
       "desc": "",
       "projectId": "work",
-      "status": "progress",
+      "status": "done",
       "priority": "high",
       "due": "2026-12-04"
     },
@@ -64,7 +64,7 @@
       "title": "何生dd84",
       "desc": "",
       "projectId": "work",
-      "status": "progress",
+      "status": "done",
       "priority": "high",
       "due": "2026-12-04"
     },
