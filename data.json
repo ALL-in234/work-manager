@@ -111,7 +111,7 @@
     {
       "id": "1791958960124",
       "title": "487",
-      "desc": "消防處理中",
+      "desc": "蔡生處理中",
       "projectId": "personal",
       "status": "progress",
       "priority": "low",
@@ -199,5 +199,5 @@
       "due": "2026-10-19"
     }
   ],
-  "currentProject": "p_1792036367628"
+  "currentProject": "personal"
 }
