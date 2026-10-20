@@ -194,7 +194,7 @@
       "title": "傑寶",
       "desc": "倉位置有樹\n可做一份landscape proposal",
       "projectId": "p_1792036367628",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "due": "2026-10-19"
     },
@@ -217,5 +217,5 @@
       "due": "2026-12-11"
     }
   ],
-  "currentProject": "work"
+  "currentProject": "p_1792036367628"
 }
