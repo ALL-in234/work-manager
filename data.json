@@ -185,7 +185,7 @@
       "title": "610",
       "desc": "Response to TD comments",
       "projectId": "p_1792036367628",
-      "status": "todo",
+      "status": "done",
       "priority": "medium",
       "due": "2026-10-15"
     },
@@ -217,5 +217,5 @@
       "due": "2026-12-11"
     }
   ],
-  "currentProject": "inbox"
+  "currentProject": "p_1792036367628"
 }
