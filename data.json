@@ -56,7 +56,7 @@
     },
     {
       "id": "1791958211689",
-      "title": "綠化地",
+      "title": "HLH96 綠化地",
       "desc": "12月開會",
       "projectId": "work",
       "status": "todo",
@@ -217,5 +217,5 @@
       "due": "2026-12-11"
     }
   ],
-  "currentProject": "p_1792036367628"
+  "currentProject": "work"
 }
