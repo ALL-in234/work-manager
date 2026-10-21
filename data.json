@@ -233,7 +233,16 @@
       "status": "todo",
       "priority": "medium",
       "due": ""
+    },
+    {
+      "id": "1792551151528",
+      "title": "128",
+      "desc": "10月13日入消防proposal 給fsd",
+      "projectId": "inbox",
+      "status": "progress",
+      "priority": "low",
+      "due": ""
     }
   ],
-  "currentProject": "work"
+  "currentProject": "inbox"
 }
