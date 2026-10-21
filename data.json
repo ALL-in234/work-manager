@@ -242,7 +242,16 @@
       "status": "progress",
       "priority": "low",
       "due": ""
+    },
+    {
+      "id": "1792555598775",
+      "title": "安裝交通指示牌",
+      "desc": "487\n664\n610",
+      "projectId": "p_1792036367628",
+      "status": "todo",
+      "priority": "high",
+      "due": ""
     }
   ],
-  "currentProject": "inbox"
+  "currentProject": "p_1792036367628"
 }
