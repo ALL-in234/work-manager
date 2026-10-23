@@ -32,8 +32,8 @@
       "title": "752",
       "desc": "等渠務報告批准，規劃無反對",
       "projectId": "work",
-      "status": "todo",
-      "priority": "medium",
+      "status": "progress",
+      "priority": "high",
       "due": "2026-12-04"
     },
     {
@@ -262,5 +262,5 @@
       "due": ""
     }
   ],
-  "currentProject": "personal"
+  "currentProject": "work"
 }
