@@ -221,7 +221,7 @@
       "title": "752",
       "desc": "現有水道影相",
       "projectId": "p_1792036367628",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "due": ""
     },
@@ -271,5 +271,5 @@
       "due": ""
     }
   ],
-  "currentProject": "work"
+  "currentProject": "p_1792036367628"
 }
