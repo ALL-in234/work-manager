@@ -305,15 +305,6 @@
       "status": "todo",
       "priority": "medium",
       "due": ""
-    },
-    {
-      "id": "1793082904938",
-      "title": "德州倉庫",
-      "desc": "",
-      "projectId": "work",
-      "status": "todo",
-      "priority": "high",
-      "due": ""
     }
   ],
   "currentProject": "work"
