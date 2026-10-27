@@ -296,6 +296,15 @@
       "status": "todo",
       "priority": "medium",
       "due": ""
+    },
+    {
+      "id": "1793082865208",
+      "title": "商店文件準備",
+      "desc": "",
+      "projectId": "p_1792036367628",
+      "status": "todo",
+      "priority": "medium",
+      "due": ""
     }
   ],
   "currentProject": "p_1792036367628"
