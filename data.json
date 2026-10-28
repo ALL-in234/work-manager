@@ -705,6 +705,15 @@
       "status": "done",
       "priority": "medium",
       "due": "2026-10-27"
+    },
+    {
+      "id": "1793175010912",
+      "title": "WAIVER",
+      "desc": "DD80 491、572SA",
+      "projectId": "p_1793164147504",
+      "status": "done",
+      "priority": "medium",
+      "due": "2026-06-26"
     }
   ],
   "currentProject": "p_1793164147504"
