@@ -516,6 +516,15 @@
       "status": "done",
       "priority": "medium",
       "due": "2026-06-23"
+    },
+    {
+      "id": "1793169487656",
+      "title": "寄信",
+      "desc": "城規會\n MKT47",
+      "projectId": "p_1793164147504",
+      "status": "todo",
+      "priority": "medium",
+      "due": "2026-06-24"
     }
   ],
   "currentProject": "p_1793164147504"
