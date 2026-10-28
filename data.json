@@ -507,6 +507,15 @@
       "status": "done",
       "priority": "medium",
       "due": "2026-07-06"
+    },
+    {
+      "id": "1793169442899",
+      "title": "S16",
+      "desc": "2026S0313 MKT47",
+      "projectId": "p_1793164147504",
+      "status": "done",
+      "priority": "medium",
+      "due": "2026-06-23"
     }
   ],
   "currentProject": "p_1793164147504"
