@@ -714,6 +714,15 @@
       "status": "done",
       "priority": "medium",
       "due": "2026-06-26"
+    },
+    {
+      "id": "1793175075706",
+      "title": "WAIVER",
+      "desc": "DD80 490\n葉華清村長\n德記",
+      "projectId": "p_1793164147504",
+      "status": "done",
+      "priority": "medium",
+      "due": "2026-08-31"
     }
   ],
   "currentProject": "p_1793164147504"
