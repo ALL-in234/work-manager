@@ -687,6 +687,15 @@
       "status": "done",
       "priority": "medium",
       "due": "2026-02-23"
+    },
+    {
+      "id": "1793174836274",
+      "title": "WAIVER",
+      "desc": "DD80 520RP\n浩昇（林梅）\n10月26日更換資料",
+      "projectId": "p_1793164147504",
+      "status": "todo",
+      "priority": "medium",
+      "due": "2026-10-23"
     }
   ],
   "currentProject": "p_1793164147504"
