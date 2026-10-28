@@ -777,7 +777,16 @@
       "status": "todo",
       "priority": "medium",
       "due": "2026-10-30"
+    },
+    {
+      "id": "1793188728322",
+      "title": "DD 82 143",
+      "desc": "商店",
+      "projectId": "work",
+      "status": "todo",
+      "priority": "low",
+      "due": ""
     }
   ],
-  "currentProject": "p_1792036367628"
+  "currentProject": "work"
 }
