@@ -804,6 +804,15 @@
       "status": "progress",
       "priority": "high",
       "due": "2026-10-30"
+    },
+    {
+      "id": "1793266169380",
+      "title": "申請登報",
+      "desc": "",
+      "projectId": "p_1792036367628",
+      "status": "todo",
+      "priority": "medium",
+      "due": ""
     }
   ],
   "currentProject": "p_1792036367628"
