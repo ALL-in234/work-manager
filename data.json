@@ -61,7 +61,7 @@
     {
       "id": "1791958211689",
       "title": "HLH96 綠化地",
-      "desc": "12月4號開會",
+      "desc": "12月4號開會\n11月17號咨詢期完",
       "projectId": "work",
       "status": "todo",
       "priority": "high",
@@ -797,5 +797,5 @@
       "due": ""
     }
   ],
-  "currentProject": "p_1792036367628"
+  "currentProject": "work"
 }
