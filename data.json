@@ -270,7 +270,7 @@
       "title": "新車場評估及交通分析",
       "desc": "",
       "projectId": "p_1792036367628",
-      "status": "todo",
+      "status": "done",
       "priority": "high",
       "due": ""
     },
@@ -851,5 +851,5 @@
       "due": "2026-11-05"
     }
   ],
-  "currentProject": "p_1793164147504"
+  "currentProject": "p_1792036367628"
 }
