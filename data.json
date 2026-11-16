@@ -52,10 +52,10 @@
     {
       "id": "1791958106344",
       "title": "傑寶",
-      "desc": "PD and TD comment 已經回復",
+      "desc": "PD and TD comment 已經回復\n不批准",
       "projectId": "work",
       "status": "progress",
-      "priority": "medium",
+      "priority": "low",
       "due": "2026-11-20"
     },
     {
@@ -842,5 +842,5 @@
       "due": "2026-11-12"
     }
   ],
-  "currentProject": "p_1792036367628"
+  "currentProject": "work"
 }
