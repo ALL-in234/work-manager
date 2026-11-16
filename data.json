@@ -826,7 +826,7 @@
     {
       "id": "1794541249373",
       "title": "S16",
-      "desc": "2026S14121\n保域\nDD80 LOT67 SB RP,68, 70,72, 78,369",
+      "desc": "2026S1421\n保域\nDD80 LOT67 SB RP,68, 70,72, 78,369",
       "projectId": "p_1793164147504",
       "status": "done",
       "priority": "medium",
@@ -851,5 +851,5 @@
       "due": ""
     }
   ],
-  "currentProject": "personal"
+  "currentProject": "p_1793164147504"
 }
