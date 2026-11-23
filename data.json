@@ -50,15 +50,6 @@
       "due": "2026-11-20"
     },
     {
-      "id": "1791958106344",
-      "title": "傑寶",
-      "desc": "PD and TD comment 已經回復\n不批准",
-      "projectId": "work",
-      "status": "progress",
-      "priority": "low",
-      "due": "2026-11-20"
-    },
-    {
       "id": "1791958211689",
       "title": "HLH96 綠化地",
       "desc": "12月4號開會\n11月17號咨詢期完",
@@ -860,5 +851,5 @@
       "due": "2026-11-18"
     }
   ],
-  "currentProject": "p_1793164147504"
+  "currentProject": "work"
 }
